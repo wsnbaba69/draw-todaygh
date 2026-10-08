@@ -78,4 +78,598 @@
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:15px}
   .chip{font-size:11.5px;padding:5px 10px;border-radius:999px;font-weight:600;
     background:rgba(167,139,250,.14);border:1px solid rgba(167,139,250,.32);color:#c9bcff}
-  .chip.extra{background:rgba(255,179,71,.13);border-color:rgba(2
+  .chip.extra{background:rgba(255,179,71,.13);border-color:rgba(255,179,71,.35);color:#ffd08a}
+  .block-title{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:1.6px;margin-bottom:8px}
+  .links{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .links a{font-size:12px;text-decoration:none;color:#d6cff0;font-weight:600;
+    padding:6px 11px;border-radius:9px;background:#241e3a;border:1px solid var(--line);transition:.15s}
+  .links a:hover{background:#332a55;border-color:#5a4a8c;color:#fff}
+  .kw{font-size:11.5px;color:#6f6889;line-height:1.7;word-break:break-all;margin-bottom:14px}
+  .ref-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .ref-status{font-size:11.5px;color:var(--muted);flex:1;min-width:100px}
+  .ref-status.err{color:#ff8f8f}
+  .ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+  .ref-grid a{display:block;aspect-ratio:1/1;border-radius:9px;overflow:hidden;
+    background:#241e3a;border:1px solid var(--line);position:relative}
+  .ref-grid img{width:100%;height:100%;object-fit:cover;display:block;transition:.3s}
+  .ref-grid a:hover img{transform:scale(1.09)}
+  .ref-skeleton{aspect-ratio:1/1;border-radius:9px;background:#241e3a;
+    animation:sk 1.3s ease-in-out infinite}
+  @keyframes sk{0%,100%{opacity:.45}50%{opacity:.85}}
+  .tips{display:flex;flex-direction:column;gap:9px;margin-bottom:15px}
+  .tip-item{background:#1f1a33;border:1px solid #2a2342;border-left:3px solid var(--accent2);
+    border-radius:10px;padding:10px 12px}
+  .tip-item b{font-size:13px;display:block;margin-bottom:3px}
+  .tip-item span.tag{font-size:10px;color:var(--muted);letter-spacing:1px;font-weight:700}
+  .tip-item p{font-size:12.5px;color:#a49dbd;line-height:1.65;margin-top:3px}
+  .panel-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .more{margin-top:30px}
+  .more-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .more-head h2{font-size:19px;font-weight:800}
+  .more-head p{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .more-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .more-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px}
+  .more-card h4{font-size:13px;margin-bottom:7px;color:#e6e1f7}
+  .more-card p{font-size:11.5px;color:#8d86a6;line-height:1.9}
+  .more-card p span{color:#b6aee0}
+  .challenge{margin-bottom:16px;padding:15px 18px;border-radius:15px;
+    background:linear-gradient(100deg,rgba(255,179,71,.16),rgba(167,139,250,.14));
+    border:1px solid rgba(255,179,71,.3);font-size:15px;font-weight:700;line-height:1.6}
+  .challenge small{display:block;font-size:11px;color:var(--muted);font-weight:700;
+    letter-spacing:1.5px;margin-bottom:5px}
+  ::selection{background:rgba(255,179,71,.35)}
+</style>
+</head>
+<body>
+
+<div id="boot-error"></div>
+
+<noscript>
+  <div style="padding:22px;background:#7f1d1d;color:#fff;text-align:center;font-size:14px;line-height:1.8">
+    你的浏览器禁用了 JavaScript，转盘无法运行。<br>
+    请用系统浏览器（Chrome / Safari）重新打开本文件。
+  </div>
+</noscript>
+
+<div class="page">
+
+  <header class="hero">
+    <div>
+      <h1>今天画什么？</h1>
+      <p>转一下，让命运替你做决定 —— 抽到什么就画什么，别挑。</p>
+    </div>
+    <div class="hero-btns">
+      <button class="btn primary" id="spinAll">🎲 全部开抽</button>
+      <button class="btn ghost" id="resetBtn">重置</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="wheels" id="wheels">
+      <div class="placeholder">正在加载转盘…<br>如果一直卡在这里，请用系统浏览器（Chrome / Safari）打开本文件。</div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-head"><span class="dot"></span><h2>今日命题</h2></div>
+      <p class="sentence" id="sentence">还没抽呢，点上面的转盘开始 →</p>
+      <div class="chips" id="chips"></div>
+      <div id="linkBlock" hidden>
+        <div class="block-title">搜图入口</div>
+        <div class="links" id="links"></div>
+        <div class="kw" id="kw"></div>
+        <div class="block-title">联网参考图</div>
+        <div class="ref-bar">
+          <button class="btn ghost sm" id="refBtn">🔍 加载参考图</button>
+          <span class="ref-status" id="refStatus">抽奖后可联网拉图</span>
+        </div>
+        <div class="ref-grid" id="refGrid"></div>
+      </div>
+      <div class="tips" id="tips"></div>
+      <div class="panel-actions">
+        <button class="btn ghost sm" id="copyBtn">复制命题</button>
+        <button class="btn ghost sm" id="againBtn">再来一次</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="more">
+    <div class="more-head">
+      <div>
+        <h2>还能加点什么？</h2>
+        <p>题目太简单就不好玩了 —— 下面这些维度都能做成新的转盘 👇</p>
+      </div>
+      <button class="btn ghost" id="challengeBtn">🎰 随机来一条挑战</button>
+    </div>
+    <div class="challenge" id="challengeBox" hidden></div>
+    <div class="more-grid" id="moreGrid">
+      <div class="placeholder" style="grid-column:1/-1">正在加载…</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var errBar = document.getElementById('boot-error');
+  function showErr(msg){
+    if (!errBar) return;
+    errBar.style.display = 'block';
+    errBar.textContent += msg + '\n';
+  }
+  window.onerror = function(m, u, l){
+    showErr('JS错误: ' + m + ' (第 ' + l + ' 行)');
+    return false;
+  };
+  window.addEventListener('unhandledrejection', function(e){
+    var r = e.reason;
+    showErr('异步错误: ' + (r && r.message ? r.message : r));
+  });
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ===== 数据 ===== */
+  var WHEELS = {
+    style:{ title:'画风风格', hue:265, items:[
+      {name:'日系动漫', en:'anime illustration', tip:'参考新海诚式光影、吉卜力配色。注意头身比与五官简化，赛璐璐上色时阴影形状要有设计感。'},
+      {name:'美式卡通', en:'cartoon character design', tip:'夸张比例 + 粗描边 + 高饱和色。参考《怪诞小镇》《蜘蛛侠：平行宇宙》的角色设计。'},
+      {name:'厚涂写实', en:'digital painting portrait', tip:'先铺大色块再过渡，注意边缘虚实。参考 Craig Mullins、Proko 的人体结构。'},
+      {name:'水彩晕染', en:'watercolor painting', tip:'湿画法打底、干画法收形，保留纸张颗粒与飞白。参考关维兴、永山裕子。'},
+      {name:'赛博朋克', en:'cyberpunk art', tip:'霓虹光源做主光，冷暖强对比，雨夜反光地面。参考《银翼杀手2049》《攻壳机动队》。'},
+      {name:'国风工笔', en:'chinese gongbi painting', tip:'白描勾线 + 矿物色平涂，重留白与纹样。参考《千里江山图》《韩熙载夜宴图》。'},
+      {name:'像素风', en:'pixel art character', tip:'限定 16～32 色色板，注意抗锯齿与颗粒感，可用 Aseprite。参考《Hyper Light Drifter》。'},
+      {name:'极简线稿', en:'minimal line art', tip:'一笔成型，靠线条粗细与负空间表达体积。参考 Moebius、马蒂斯速写。'},
+      {name:'复古油画', en:'classical oil painting portrait', tip:'伦勃朗光、暖褐调、厚堆笔触。参考萨金特与伦勃朗的肖像光影。'},
+      {name:'蒸汽波', en:'vaporwave aesthetic', tip:'粉紫渐变 + 网格地平线 + 80 年代元素，可加故障与辉光。'},
+      {name:'暗黑哥特', en:'gothic dark art', tip:'低明度、装饰性线条、神秘宗教感。参考 Gustave Dore 的版画。'},
+      {name:'治愈绘本', en:'children book illustration', tip:'柔和圆润的造型，暖灰调，加蜡笔/彩铅的材质肌理。参考《猜猜我有多爱你》。'}
+    ]},
+    gender:{ title:'性别', hue:330, items:[
+      {name:'男性', en:'male', tip:'强调肩宽与骨骼转折，眉弓、下颌角、喉结可适度强化，但别画成肌肉怪。'},
+      {name:'女性', en:'female', tip:'注意肩窄腰细的曲线节奏，面部柔和但骨骼结构不能丢。'},
+      {name:'中性', en:'androgynous', tip:'弱化第二性征，靠发型、服装、姿态来传达气质。'},
+      {name:'不限', en:'', tip:'自由发挥，先想气质再反推外形。'}
+    ]},
+    age:{ title:'年龄段', hue:35, items:[
+      {name:'幼年', en:'child', tip:'头身比约 1:3～1:4，脸圆、四肢短粗、眼睛位置偏低、手指短。'},
+      {name:'少年', en:'teenager', tip:'头身比约 1:5～1:6，四肢开始拉长但仍带稚气，肩窄。'},
+      {name:'青年', en:'young adult', tip:'头身比约 1:7～1:8，结构最清晰，最适合练形体与肌肉穿插。'},
+      {name:'中年', en:'middle aged person', tip:'注意法令纹、眼袋、体态微沉，下颌与颈部开始松弛，肩背变厚。'},
+      {name:'老年', en:'elderly person', tip:'骨骼感突出、皮肤松弛、白发与老年斑，重点刻画手部与颈部。'}
+    ]},
+    extra:{ title:'加料', hue:165, items:[
+      {name:'手持发光物', en:'holding glowing light', tip:'灯笼 / 手机 / 魔杖皆可，让光源真正参与构图和明暗。'},
+      {name:'雨夜街头', en:'rainy night street', tip:'湿地反光、霓虹倒影，是最好用的氛围道具。'},
+      {name:'逆光剪影', en:'backlit silhouette', tip:'牺牲细节换气氛，重点在轮廓线的辨识度。'},
+      {name:'俯视视角', en:'bird eye view', tip:'大胆透视，注意头大身小的压缩感与地面投影。'},
+      {name:'动物伙伴', en:'with animal companion', tip:'猫、乌鸦、狐狸都行，注意它和主角的互动关系。'},
+      {name:'民族服饰', en:'ethnic traditional costume', tip:'挑一个民族，认真研究它的纹样逻辑与配色。'},
+      {name:'植物环绕', en:'surrounded by plants', tip:'用枝叶做画框，注意前中后三层景深。'},
+      {name:'镜面倒影', en:'mirror reflection', tip:'镜像里可以藏另一个自己。'},
+      {name:'局部特写', en:'extreme close up face', tip:'只画眼睛或手，把细节推到极致。'},
+      {name:'动态奔跑', en:'running dynamic pose', tip:'抓关键帧，注意重心前倾与衣摆的滞后感。'},
+      {name:'窗边侧光', en:'window side light', tip:'经典单侧光，最适合练明暗交界线与反光。'},
+      {name:'戴面具', en:'wearing mask', tip:'面具是隐藏情绪的绝佳道具，也考验造型设计。'}
+    ]}
+  };
+  var ORDER = ['style','gender','age','extra'];
+
+  /* ===== 画转盘 ===== */
+  function makePalette(hue, n){
+    var out = [], i;
+    for (i=0;i<n;i++){
+      out.push('hsl(' + ((hue + (i%3)*9)%360) + ' 68% ' + (i%2===0?77:67) + '%)');
+    }
+    return out;
+  }
+  function draw(w){
+    var canvas = w.canvas;
+    var size = canvas.clientWidth || 200;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(size*dpr);
+    canvas.height = Math.round(size*dpr);
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,size,size);
+
+    var cx=size/2, cy=size/2, r=size/2-1;
+    var n=w.items.length, seg=Math.PI*2/n;
+    var pal=makePalette(w.hue,n);
+    var i, a0, a1;
+
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(w.rotation);
+    for (i=0;i<n;i++){
+      a0=i*seg; a1=a0+seg;
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,a0,a1); ctx.closePath();
+      ctx.fillStyle=pal[i]; ctx.fill();
+      ctx.lineWidth=1; ctx.strokeStyle='rgba(20,16,32,.22)'; ctx.stroke();
+
+      ctx.save();
+      ctx.rotate(a0+seg/2);
+      ctx.textAlign='right'; ctx.textBaseline='middle';
+      var fs=Math.min(size*0.062,(r*seg)*0.45);
+      ctx.font='700 ' + fs + 'px ui-sans-serif,system-ui,"PingFang SC","Microsoft YaHei",sans-serif';
+      ctx.fillStyle='#17131f';
+      ctx.fillText(w.items[i].name, r-size*0.045, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+
+    if (w.resultIndex != null && !w.spinning){
+      a0 = w.resultIndex*seg;
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(w.rotation);
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r-2,a0,a0+seg); ctx.closePath();
+      ctx.strokeStyle='rgba(255,179,71,.95)'; ctx.lineWidth=3;
+      ctx.shadowColor='rgba(255,179,71,.8)'; ctx.shadowBlur=12;
+      ctx.stroke(); ctx.restore();
+    }
+
+    ctx.beginPath(); ctx.arc(cx,cy,size*0.095,0,Math.PI*2);
+    ctx.fillStyle='#17131f'; ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,size*0.032,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,179,71,.85)'; ctx.fill();
+  }
+
+  /* ===== 转动 ===== */
+  function spin(key){
+    var w = WHEELS[key];
+    if (w.spinning) return;
+    w.spinning = true; w.resultIndex = null;
+
+    var n=w.items.length, seg=Math.PI*2/n;
+    var idx=Math.floor(Math.random()*n);
+    var targetAngle=-Math.PI/2-(idx+0.5)*seg;
+
+    var turns=4+Math.floor(Math.random()*3);
+    var minRot=w.rotation+turns*Math.PI*2;
+    var finalRot=targetAngle;
+    while (finalRot<minRot) finalRot+=Math.PI*2;
+
+    var start=w.rotation, dur=2400+Math.random()*900, t0=performance.now();
+
+    function frame(t){
+      var p=Math.min(1,(t-t0)/dur);
+      var e=1-Math.pow(1-p,3.2);
+      w.rotation=start+(finalRot-start)*e;
+      draw(w);
+      if (p<1){ requestAnimationFrame(frame); }
+      else {
+        w.spinning=false;
+        w.rotation=finalRot%(Math.PI*2);
+        w.result=w.items[idx];
+        w.resultIndex=idx;
+        draw(w);
+        updateResult();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ===== 结果面板 ===== */
+  var refState = { query:'', busy:false };
+
+  function buildQuery(res){
+    var parts=[], k;
+    for (k in res){
+      if (res[k] && res[k].en) parts.push(res[k].en);
+    }
+    if (!parts.length) parts.push('illustration');
+    return parts.join(' ');
+  }
+
+  function updateResult(){
+    var res = {}, k;
+    ORDER.forEach(function(key){ res[key] = WHEELS[key].result; });
+
+    ORDER.forEach(function(key){
+      var w = WHEELS[key];
+      w.resultEl.textContent = w.result ? w.result.name : '—';
+      if (w.result) w.resultEl.classList.add('on');
+      else w.resultEl.classList.remove('on');
+    });
+
+    var who='';
+    if (res.age) who += res.age.name;
+    if (res.gender){
+      if (res.gender.name==='不限') who += (who?'角色':'任意角色');
+      else who += res.gender.name;
+    }
+
+    var sentence='';
+    if (res.style && who) sentence = '用「<em>' + res.style.name + '</em>」画一个<em>' + who + '</em>';
+    else if (res.style)   sentence = '用「<em>' + res.style.name + '</em>」画个角色';
+    else if (who)         sentence = '画一个<em>' + who + '</em>';
+    if (res.extra) sentence += (sentence?'，':'') + '加料：<em>' + res.extra.name + '</em>';
+    if (!sentence) sentence = '还没抽呢，点上面的转盘开始 →';
+    $('sentence').innerHTML = sentence;
+
+    var chipsHtml = '';
+    ORDER.forEach(function(key){
+      if (!res[key]) return;
+      var cls = key==='extra' ? 'chip extra' : 'chip';
+      chipsHtml += '<span class="' + cls + '">' + WHEELS[key].title + ' · ' + res[key].name + '</span>';
+    });
+    $('chips').innerHTML = chipsHtml;
+
+    var any = ORDER.some(function(key){ return res[key]; });
+    if (any){
+      var q = buildQuery(res);
+      var cnWords = [];
+      ORDER.forEach(function(key){
+        if (res[key] && res[key].name !== '不限') cnWords.push(res[key].name);
+      });
+      var e = encodeURIComponent;
+      var links = [
+        ['Pinterest',  'https://www.pinterest.com/search/pins/?q=' + e(q)],
+        ['Google 图片','https://www.google.com/search?tbm=isch&q=' + e(q)],
+        ['Pixiv',      'https://www.pixiv.net/search.php?word=' + e(cnWords.join(' '))],
+        ['花瓣',       'https://huaban.com/search?q=' + e(cnWords.join(' '))],
+        ['ArtStation', 'https://www.artstation.com/search?query=' + e(q)],
+        ['Unsplash',   'https://unsplash.com/s/photos/' + e(q.split(' ').slice(0,2).join(','))]
+      ];
+      var linksHtml = '';
+      links.forEach(function(p){
+        linksHtml += '<a href="' + p[1] + '" target="_blank" rel="noopener">' + p[0] + ' ↗</a>';
+      });
+      $('links').innerHTML = linksHtml;
+      $('kw').textContent = '搜索词：' + q;
+      $('linkBlock').hidden = false;
+      refState.query = q;
+    } else {
+      $('linkBlock').hidden = true;
+      refState.query = '';
+    }
+
+    $('refGrid').innerHTML = '';
+    $('refStatus').className = 'ref-status';
+    $('refStatus').textContent = '点击按钮联网拉取';
+
+    var tipsHtml = '';
+    ORDER.forEach(function(key){
+      if (!res[key]) return;
+      tipsHtml += '<div class="tip-item">'
+        + '<span class="tag">' + WHEELS[key].title + '</span>'
+        + '<b>' + res[key].name + '</b>'
+        + '<p>' + res[key].tip + '</p>'
+        + '</div>';
+    });
+    $('tips').innerHTML = tipsHtml;
+
+    var plain = sentence.replace(/<[^>]+>/g,'');
+    var kwList = [];
+    ORDER.forEach(function(key){ if (res[key]) kwList.push(res[key].name); });
+    window.__lastPrompt = plain + '\n搜索词：' + kwList.join(' ');
+  }
+
+  /* ===== 联网素材 ===== */
+  function fetchOpenverse(q, n){
+    var url = 'https://api.openverse.org/v1/images/?q=' + encodeURIComponent(q)
+      + '&page_size=' + n + '&mature=false';
+    return fetch(url, {headers:{'Accept':'application/json'}}).then(function(r){
+      if (!r.ok) throw new Error('Openverse ' + r.status);
+      return r.json();
+    }).then(function(d){
+      var list = [];
+      (d.results || []).forEach(function(it){
+        var thumb = it.thumbnail || it.url;
+        if (thumb && /^https?:/.test(thumb)){
+          list.push({
+            thumb: thumb, full: it.url,
+            title: it.title || 'untitled',
+            page: it.foreign_landing_url || it.url,
+            from: 'Openverse'
+          });
+        }
+      });
+      if (!list.length) throw new Error('Openverse 无结果');
+      return list;
+    });
+  }
+
+  function fetchCommons(q, n){
+    var url = 'https://commons.wikimedia.org/w/api.php?action=query'
+      + '&generator=search&gsrnamespace=6'
+      + '&gsrsearch=' + encodeURIComponent(q)
+      + '&gsrlimit=' + n
+      + '&prop=imageinfo&iiprop=url&iiurlwidth=420'
+      + '&format=json&origin=*';
+    return fetch(url).then(function(r){
+      if (!r.ok) throw new Error('Commons ' + r.status);
+      return r.json();
+    }).then(function(d){
+      var pages = (d && d.query && d.query.pages) || {};
+      var list = [];
+      Object.keys(pages).forEach(function(k){
+        var p = pages[k];
+        var ii = (p.imageinfo && p.imageinfo[0]) || {};
+        var thumb = ii.thumburl || ii.url;
+        if (thumb && /^https?:/.test(thumb)){
+          list.push({
+            thumb: thumb, full: ii.url,
+            title: (p.title || '').replace(/^File:/,''),
+            page: ii.descriptionurl || ii.url,
+            from: 'Wikimedia'
+          });
+        }
+      });
+      if (!list.length) throw new Error('Commons 无结果');
+      return list;
+    });
+  }
+
+  function renderSkeleton(n){
+    var html = '', i;
+    for (i=0;i<n;i++) html += '<div class="ref-skeleton"></div>';
+    $('refGrid').innerHTML = html;
+  }
+
+  function renderRefs(items){
+    var html = '';
+    items.forEach(function(it, i){
+      var title = (it.title || '').replace(/"/g,'');
+      html += '<a href="' + it.page + '" target="_blank" rel="noopener" title="' + title + '">'
+        + '<img src="' + it.thumb + '" alt="参考图' + (i+1) + '" loading="lazy" referrerpolicy="no-referrer"'
+        + ' onerror="this.parentNode.style.display=\'none\'">'
+        + '</a>';
+    });
+    $('refGrid').innerHTML = html;
+  }
+
+  function loadRefs(){
+    if (refState.busy) return;
+    var q = refState.query;
+    if (!q){ $('refStatus').textContent = '先抽一次转盘吧'; return; }
+
+    refState.busy = true;
+    $('refBtn').disabled = true;
+    $('refStatus').className = 'ref-status';
+    $('refStatus').textContent = '正在联网搜索…';
+    renderSkeleton(9);
+
+    fetchOpenverse(q, 12).then(function(items){
+      refState.busy = false;
+      $('refBtn').disabled = false;
+      renderRefs(items);
+      $('refStatus').textContent = 'Openverse · 找到 ' + items.length + ' 张，点击看原图';
+    }).catch(function(){
+      $('refStatus').textContent = '主图源不可用，切换备用…';
+      return fetchCommons(q, 12).then(function(items){
+        refState.busy = false;
+        $('refBtn').disabled = false;
+        renderRefs(items);
+        $('refStatus').textContent = 'Wikimedia · 找到 ' + items.length + ' 张，点击看原图';
+      });
+    }).catch(function(){
+      refState.busy = false;
+      $('refBtn').disabled = false;
+      $('refGrid').innerHTML = '';
+      $('refStatus').className = 'ref-status err';
+      $('refStatus').textContent = '联网失败，请检查网络后重试';
+    });
+  }
+
+  /* ===== 初始化 ===== */
+  function init(){
+    var wheelsEl = $('wheels');
+    wheelsEl.innerHTML = '';
+
+    ORDER.forEach(function(key){
+      var w = WHEELS[key];
+      var card = document.createElement('div');
+      card.className = 'wheel-card';
+      card.innerHTML = '<span class="wheel-title">' + w.title + '</span>'
+        + '<div class="wheel-wrap"><div class="pointer"></div><canvas></canvas></div>'
+        + '<button class="spin-btn">抽这个</button>'
+        + '<div class="wheel-result">—</div>';
+      wheelsEl.appendChild(card);
+
+      w.canvas = card.querySelector('canvas');
+      w.resultEl = card.querySelector('.wheel-result');
+      w.rotation = 0; w.result = null; w.resultIndex = null; w.spinning = false;
+
+      card.querySelector('.wheel-wrap').addEventListener('click', function(){ spin(key); });
+      card.querySelector('.spin-btn').addEventListener('click', function(){ spin(key); });
+    });
+
+    requestAnimationFrame(function(){
+      ORDER.forEach(function(k){ draw(WHEELS[k]); });
+    });
+
+    // 更多维度
+    var MORE_DIMS = [
+      {t:'姿势动态', v:['回眸','奔跑','蜷缩','仰头','倚墙','跳跃','跪坐','伸手']},
+      {t:'服装造型', v:['汉服','西装','机能风','旗袍','校服','盔甲','毛衣','和服']},
+      {t:'场景环境', v:['天台','地铁站','森林','废弃工厂','图书馆','海边','太空舱','菜市场']},
+      {t:'光线时段', v:['清晨','正午','黄昏','蓝调时刻','深夜','阴天','烛光','霓虹']},
+      {t:'情绪氛围', v:['平静','愤怒','疲惫','雀跃','孤独','怀念','警惕','释然']},
+      {t:'配色方案', v:['互补色','邻近色','单色系','莫兰迪','高饱和撞色','只准用三色']},
+      {t:'道具物件', v:['伞','相机','花','书','武器','乐器','茶杯','气球']},
+      {t:'职业身份', v:['医生','乐手','侦探','面包师','宇航员','花匠','拳手','学生']},
+      {t:'构图视角', v:['大特写','中景','全身','俯视','仰视','广角','背影','镜中']},
+      {t:'材质质感', v:['丝绸','金属','毛绒','玻璃','皮革','陶瓷','纸质','水']},
+      {t:'天气气候', v:['暴雨','大雾','落雪','沙尘','晴空','闷热','台风前','初雪']},
+      {t:'限定挑战', v:['30 分钟完成','只用 3 种颜色','不用橡皮','只用直线','闭眼铺色后收形','禁用黑色']}
+    ];
+    var gridHtml = '';
+    MORE_DIMS.forEach(function(d){
+      var spans = d.v.map(function(x){ return '<span>' + x + '</span>'; }).join(' · ');
+      gridHtml += '<div class="more-card"><h4>' + d.t + '</h4><p>' + spans + '</p></div>';
+    });
+    $('moreGrid').innerHTML = gridHtml;
+
+    // 按钮事件
+    $('spinAll').addEventListener('click', function(){
+      ORDER.forEach(function(k,i){ setTimeout(function(){ spin(k); }, i*170); });
+    });
+    $('againBtn').addEventListener('click', function(){
+      ORDER.forEach(function(k,i){ setTimeout(function(){ spin(k); }, i*170); });
+    });
+    $('resetBtn').addEventListener('click', function(){
+      ORDER.forEach(function(k){
+        var w = WHEELS[k];
+        if (w.spinning) return;
+        w.result = null; w.resultIndex = null; w.rotation = 0;
+        draw(w);
+        w.resultEl.textContent = '—';
+        w.resultEl.classList.remove('on');
+      });
+      $('sentence').textContent = '还没抽呢，点上面的转盘开始 →';
+      $('chips').innerHTML = '';
+      $('tips').innerHTML = '';
+      $('linkBlock').hidden = true;
+      $('refGrid').innerHTML = '';
+      $('refStatus').className = 'ref-status';
+      $('refStatus').textContent = '抽奖后可联网拉图';
+      refState.query = '';
+    });
+    $('copyBtn').addEventListener('click', function(){
+      var txt = window.__lastPrompt || '还没抽呢～';
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(function(){
+          $('copyBtn').textContent = '已复制 ✓';
+          setTimeout(function(){ $('copyBtn').textContent = '复制命题'; }, 1500);
+        }).catch(function(){
+          $('copyBtn').textContent = '长按文字复制';
+          setTimeout(function(){ $('copyBtn').textContent = '复制命题'; }, 1500);
+        });
+      } else {
+        $('copyBtn').textContent = '长按文字复制';
+        setTimeout(function(){ $('copyBtn').textContent = '复制命题'; }, 1500);
+      }
+    });
+    $('refBtn').addEventListener('click', loadRefs);
+    $('challengeBtn').addEventListener('click', function(){
+      var d = MORE_DIMS[Math.floor(Math.random()*MORE_DIMS.length)];
+      var v = d.v[Math.floor(Math.random()*d.v.length)];
+      var box = $('challengeBox');
+      box.hidden = false;
+      box.innerHTML = '<small>额外挑战</small>' + d.t + '：<em style="color:#ffb347;font-style:normal">' + v + '</em>';
+    });
+
+    document.addEventListener('keydown', function(e){
+      if (e.code === 'Space' && e.target === document.body){
+        e.preventDefault();
+        $('spinAll').click();
+      }
+    });
+
+    var rt;
+    window.addEventListener('resize', function(){
+      clearTimeout(rt);
+      rt = setTimeout(function(){
+        ORDER.forEach(function(k){ draw(WHEELS[k]); });
+      }, 120);
+    });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
